@@ -1,0 +1,41 @@
+from transformers import AutoTokenizer, AutoModelForCausalLM
+import os
+
+# Paths to the tokenizer and model
+model_path = os.path.join("models", "deepseek-llm")
+tokenizer_path = os.path.join("models", "deepseek-llm")
+
+# Debugging: Print paths
+print(f"Tokenizer path: {tokenizer_path}")
+print(f"Model path: {model_path}")
+
+# Load the tokenizer
+print("Loading tokenizer...")
+try:
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
+    print("Tokenizer loaded successfully.")
+except Exception as e:
+    print("Error loading tokenizer:", e)
+    raise
+
+# Load the model
+print("Loading model...")
+try:
+    model = AutoModelForCausalLM.from_pretrained(model_path)
+    print("Model loaded successfully.")
+except Exception as e:
+    print("Error loading model:", e)
+    raise
+
+# Input from the user
+UTTERANCE = input("You: ")
+print("Human:", UTTERANCE)
+
+# Tokenize the input
+inputs = tokenizer([UTTERANCE], return_tensors="pt")
+
+# Generate a response
+reply_ids = model.generate(**inputs, max_length=50, num_return_sequences=1)
+
+# Decode the generated response
+print("Bot:", tokenizer.decode(reply_ids[0], skip_special_tokens=True))
